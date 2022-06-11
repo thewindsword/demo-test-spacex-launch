@@ -1,18 +1,12 @@
-import { useState } from 'react'
-import {
-  useQuery,
-  gql
-} from "@apollo/client";
+
+import { Link, Outlet } from 'react-router-dom'
 import logoSVG from './logo.svg'
 import './App.css'
 
 function App() {
-  const { loading, error, data } = useQuery(GET_LAUNCHES)
-  
-  console.log('data: ', data);
   
   return (
-    <div className="App">
+    <div className="App h-screen flex flex-col">
       {/* <header className="App-header">
         Hello World
       </header> */}
@@ -27,37 +21,15 @@ function App() {
             </div>
 
             <nav className="md:flex space-x-10 lg:flex-2">
-              <a href="#" className="text-base font-medium text-gray-500 hover:text-gray-900"> Home </a>
-              <a href="#" className="text-base font-medium text-gray-500 hover:text-gray-900"> Launches </a>
+              <Link to="/" className="text-base font-medium text-gray-500 hover:text-gray-900"> Home </Link>
+              <Link to="launches" className="text-base font-medium text-gray-500 hover:text-gray-900"> Launches </Link>
             </nav>
           </div>
         </div>
       </div>
+      <Outlet />
     </div>
   )
 }
-
-const GET_LAUNCHES = gql`
-  query {
-    launches(limit: 10) {
-      id
-      mission_name
-      launch_date_local
-      launch_site {
-        site_name_long
-      }
-      links {
-        article_link
-        video_link
-      }
-      rocket {
-        rocket_name
-        rocket_type
-      }
-      launch_success
-      details
-    }
-  }  
-`;
 
 export default App

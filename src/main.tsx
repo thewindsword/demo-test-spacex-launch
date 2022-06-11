@@ -5,8 +5,15 @@ import {
   InMemoryCache,
   ApolloProvider,
 } from "@apollo/client";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+} from "react-router-dom";
 
 import App from './App'
+import HomePage from './pages/home';
+import LaunchesPage from './pages/launches';
 import './index.css'
 
 const client = new ApolloClient({
@@ -17,7 +24,14 @@ const client = new ApolloClient({
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ApolloProvider client={client}>
-      <App />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<App />}>
+            <Route index element={<HomePage />} />
+            <Route path="launches" element={<LaunchesPage />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </ApolloProvider>
   </React.StrictMode>
 )
