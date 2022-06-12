@@ -1,15 +1,12 @@
 
 import { Link, Outlet } from 'react-router-dom'
 import logoSVG from './logo.svg'
+import PaginationContext, { paginationContextData } from './context/pagination'
 import './App.css'
 
 function App() {
-  
   return (
     <div className="App h-screen flex flex-col">
-      {/* <header className="App-header">
-        Hello World
-      </header> */}
       <div className="relative bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex justify-between items-center border-b-2 border-gray-100 py-6 md:justify-start md:space-x-10">

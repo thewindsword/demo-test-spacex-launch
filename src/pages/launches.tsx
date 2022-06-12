@@ -1,96 +1,70 @@
 /** @jsxImportSource @emotion/react */
-import { jsx, css } from '@emotion/react'
+import { useEffect, useState } from "react";
+import { WaveLoading, RotateCircleLoading } from 'react-loadingg';
 import {
   useQuery,
-  gql
+  gql,
+  useLazyQuery,
 } from "@apollo/client";
+import qs from 'querystring'
 import { launchData } from '../common/types';
 import LaunchCard from '../components/LaunchCard';
+import styled from '@emotion/styled';
+import { useSearchParams } from "react-router-dom";
+
+const PageButton = styled.button`
+  position: relative;
+  min-width: 130px;
+  padding: 5px 15px;
+  background-color: black;
+  color: white;
+  font: 16px/24px D-DIN-Medium,Arial,Verdana,sans-serif;
+`
 
 export default () => {
-  // const { loading, error, data } = useQuery(GET_LAUNCHES)
-  // console.log('loading: ', loading);
-  // console.log('error: ', error);
-  // console.log('data: ', data);
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [page, setPage] = useState(1);
+  const [getLaunchesTotal, { loading: loadingTotal, error: errorTotal, data: totalData }] = useLazyQuery(GET_TOTAL)
+  const [getLaunches, { loading, error, data: LaunchesData }] = useLazyQuery(
+    GET_LAUNCHES,
+    {
+      variables: {
+        limit: 10,
+        offset: (page - 1) * 10,
+      }
+    }
+  )
 
-  const loading = false
-  const data: Array<launchData> = {
-    launches: [{
-      "id": "13",
-      "mission_name": "Thaicom 6",
-      "launch_date_local": "2014-01-06T14:06:00-04:00",
-      "launch_site": {
-        "site_name_long": "Cape Canaveral Air Force Station Space Launch Complex 40"
-      },
-      "links": {
-        "article_link": "http://spacenews.com/38959spacex-delivers-thaicom-6-satellite-to-orbit/",
-        "video_link": "https://www.youtube.com/watch?v=AnSNRzMEmCU",
-        "flickr_images": [
-          "https://farm9.staticflickr.com/8617/16789019815_f99a165dc5_o.jpg",
-          "https://farm8.staticflickr.com/7619/16763151866_35a0a4d8e1_o.jpg",
-          "https://farm9.staticflickr.com/8569/16169086873_4d8829832e_o.png"
-        ]
-      },
-      "rocket": {
-        "rocket_name": "Falcon 9",
-        "rocket_type": "v1.1"
-      },
-      "launch_success": true,
-      "details": "Second GTO launch for Falcon 9. The USAF evaluated launch data from this flight as part of a separate certification program for SpaceX to qualify to fly U.S. military payloads and found that the Thaicom 6 launch had \"unacceptable fuel reserves at engine cutoff of the stage 2 second burnoff\""
-    },
-    {
-      "id": "17",
-      "mission_name": "AsiaSat 6",
-      "launch_date_local": "2014-09-07T01:00:00-04:00",
-      "launch_site": {
-        "site_name_long": "Cape Canaveral Air Force Station Space Launch Complex 40"
-      },
-      "links": {
-        "article_link": "https://www.space.com/27052-spacex-launches-asiasat6-satellite.html",
-        "video_link": "https://www.youtube.com/watch?v=39ninsyTRk8",
-        "flickr_images": [
-          "https://farm8.staticflickr.com/7604/16169087563_0e3559ab5b_o.jpg",
-          "https://farm9.staticflickr.com/8742/16233828644_96738200b2_o.jpg",
-          "https://farm8.staticflickr.com/7645/16601443698_e70315d1ed_o.jpg",
-          "https://farm9.staticflickr.com/8730/16830335046_5f017c17be_o.jpg",
-          "https://farm9.staticflickr.com/8637/16855040322_57671ab8eb_o.jpg"
-        ]
-      },
-      "rocket": {
-        "rocket_name": "Falcon 9",
-        "rocket_type": "v1.1"
-      },
-      "launch_success": true,
-      "details": null
-    },
-    {
-      "id": "25",
-      "mission_name": "OG-2 Mission 2",
-      "launch_date_local": "2015-12-22T21:29:00-04:00",
-      "launch_site": {
-        "site_name_long": "Cape Canaveral Air Force Station Space Launch Complex 40"
-      },
-      "links": {
-        "article_link": "https://spaceflightnow.com/2015/12/22/round-trip-rocket-flight-gives-spacex-a-trifecta-of-successes/",
-        "video_link": "https://www.youtube.com/watch?v=O5bTbVbe4e4",
-        "flickr_images": [
-          "https://farm2.staticflickr.com/1648/23827554109_837b21739e_o.jpg",
-          "https://farm1.staticflickr.com/597/23802553412_d41e4dcc64_o.jpg",
-          "https://farm6.staticflickr.com/5806/23802550622_9ff8c90098_o.jpg",
-          "https://farm1.staticflickr.com/571/23604164970_2a1a2366e4_o.jpg",
-          "https://farm6.staticflickr.com/5773/23271687254_5e64d726ba_o.jpg",
-          "https://farm6.staticflickr.com/5766/23526044959_5bfe74bc88_o.jpg",
-          "https://farm6.staticflickr.com/5723/23785609832_83038751d1_o.jpg",
-          "https://farm1.staticflickr.com/715/23833499336_d3fde6a25a_o.jpg"
-        ]
-      },
-      "rocket": {
-        "rocket_name": "Falcon 9",
-        "rocket_type": "FT"
-      },
-      "launch_success": true,
-      "details": "Total payload mass was 2,034 kg (4,484 lb) : 11 satellites weighing 172 kg each, plus a 142-kg mass simulator. This was the first launch of the upgraded v1.1 variant (later called Falcon 9 Full Thrust), with a 30 percent power increase. Orbcomm had originally agreed to be the third flight of the enhanced-thrust rocket, but the change to the maiden flight position was announced in October 2015. SpaceX received a permit from the FAA to land the booster on solid ground at Cape Canaveral, and succeeded."
-    }]
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    let urlPage = params.get('page')
+    if (urlPage) {
+      setPage(+urlPage)
+    }
+    getLaunchesTotal()
+  }, [])
+
+  useEffect(() => {
+    getLaunches()
+  }, [page])
+
+  const getTotalPage = () => {
+    if (loadingTotal || !totalData) return 0
+    return Math.ceil(totalData.launchesPastResult.result.totalCount / 10)
+  }
+
+  const handlePageChange = (type: 'next' | 'past') => {
+    let resultPage = page
+    if (loading) return;
+    if (type === 'next' && page + 1 <= getTotalPage()) {
+      resultPage = page + 1;
+    } else if (type === 'past' && page > 1) {
+      resultPage = page - 1 <= 0 ? 1 : page - 1
+    }
+    const params = new URLSearchParams()
+    params.append('page', `${resultPage}`);
+    setSearchParams(params.toString())
+    setPage(resultPage)
   }
 
   function renderData(data: { launches: Array<launchData> }) {
@@ -106,20 +80,48 @@ export default () => {
   }
 
   return (
-    <div>
-      Launches List:
-      <div className='flex flex-wrap'>
+    <div className="min-h-full">
+      <div className='pt-6 relative min-h-[80%]'>
+        <div className="flex flex-wrap w-full min-h-[80%]">
+          {renderData(LaunchesData)}
+        </div>
         {loading ? (
-          <p>Loading ...</p>
-        ) : renderData(data)}
+          <div className="absolute top-0 left-0 right-0 bottom-16 flex justify-center items-start">
+            <div className="absolute top-0 bottom-0 left-0 right-0 bg-black opacity-30" />
+            <div className="mt-16">
+              <WaveLoading color="#000000" size="default" style={{}} speed={1} />
+            </div>
+          </div>
+        ) : null}
       </div>
+      {
+        loadingTotal ? <div className="flex justify-center w-10/12 mx-auto pb-6">
+           <RotateCircleLoading color="#000000" size="default" style={{}} speed={1} />
+        </div> : (
+          <div className='flex justify-between w-10/12 mx-auto pb-6'>
+            <PageButton style={{ visibility: page === 1 ? 'hidden' : 'visible' }} disabled={loadingTotal} onClick={() => handlePageChange('past')}>PAST</PageButton>
+            <div>{page} / {loadingTotal ? '?' : getTotalPage()}</div>
+            <PageButton style={{ visibility: page === getTotalPage() ? 'hidden' : 'visible' }} disabled={loadingTotal} onClick={() => handlePageChange('next')}>NEXT</PageButton>
+          </div>
+        )
+      }
     </div>
   )
 }
 
+const GET_TOTAL = gql`
+  query LaunchesTotal {
+    launchesPastResult {
+      result {
+        totalCount
+      }
+    }
+  }
+`
+
 const GET_LAUNCHES = gql`
-  query {
-    launches(limit: 2) {
+  query Launches($limit: Int!, $offset: Int!){
+    launches(limit: $limit, offset: $offset) {
       id
       mission_name
       launch_date_local
@@ -129,6 +131,7 @@ const GET_LAUNCHES = gql`
       links {
         article_link
         video_link
+        flickr_images
       }
       rocket {
         rocket_name
@@ -137,5 +140,5 @@ const GET_LAUNCHES = gql`
       launch_success
       details
     }
-  }  
+  }
 `;

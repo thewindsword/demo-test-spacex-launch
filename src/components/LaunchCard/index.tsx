@@ -1,9 +1,7 @@
 import styled from "@emotion/styled";
-import { useState } from "react";
-import YouTube, { YouTubeProps } from 'react-youtube';
 import dayjs from 'dayjs'
 import { launchData } from "../../common/types"
-import { getVideoIdByUrl } from "../../utils";
+import YoutubePlayCard from "../YoutubePlayCard";
 import './index.css';
 
 interface LaunchCardProps {
@@ -36,55 +34,53 @@ const ArticleButton = styled.button`
   font: 16px/24px D-DIN-Medium,Arial,Verdana,sans-serif;
 `
 
+const CoverImageContainer = styled.div`
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 360px;
+  overflow: hidden;
+  background-color: black;
+  cursor: pointer;
+`
+
 const CoverImage = styled.img`
   display: inline-block;
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
+  bottom: 0;
   width: 100%;
-  height: 360px;
+  height: 100%;
+  object-fit: contain;
 `
 
 export default (props: LaunchCardProps) => {
   const {
     dataSource
   } = props
-  const [isShowVideo, setShowVideo] = useState(false)
-  const youtubeVideoId = getVideoIdByUrl(dataSource.links.video_link) || '2g811Eo7K8U'
-  const opts = {
-    playerVars: {
-      width: '100%',
-      autoplay: 1,
-    },
-  };
-  const onPlayerReady: YouTubeProps['onReady'] = (event) => {
-    // access to player in all event handlers via event.target
-    event.target.pauseVideo();
-  }
   return (
     <Card>
       {
         dataSource ? (
           <div className="w-full relative">
-            <YouTube
-              videoId={youtubeVideoId}
-              opts={opts}
-              onReady={onPlayerReady}
-              className="youtubeContainer"
+            <YoutubePlayCard
+              url={dataSource.links.video_link}
+              image={dataSource.links.flickr_images[0]}
+              imageAlt={dataSource.mission_name}
+              opt={{
+                height: "360px"
+              }}              
             />
-            {
-              isShowVideo ? null : (
-                <div>
-                  <CoverImage src={dataSource.links.flickr_images[0]} alt={dataSource.mission_name} onClick={() => setShowVideo(!isShowVideo)} />
-                </div>
-              )
-            }
+
             <div className="pl-3">
               <DateText className="pt-6">{dayjs(dataSource.launch_date_local).format('MMMM D. YYYY')}</DateText>
-              <Title className="pt-3 pb-9">{dataSource.mission_name}</Title>
+              <Title className="pt-3 pb-9 overflow-hidden whitespace-nowrap text-ellipsis" title={dataSource.mission_name}>{dataSource.mission_name}</Title>
 
-              <ArticleButton className="mb-9">LEARN MORE</ArticleButton>
+              <ArticleButton className="mb-9" style={{ visibility: dataSource.links.article_link ? 'visible' : 'hidden'}} onClick={() => {
+                window.open(dataSource.links.article_link)
+              }}>LEARN MORE</ArticleButton>
             </div>
           </div>
         ) : 'No Launch Data'

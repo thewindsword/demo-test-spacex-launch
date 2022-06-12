@@ -1,0 +1,15 @@
+.coverImage-enter {
+  opacity: 0;
+}
+.coverImage-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 300ms, transform 300ms;
+}
+.coverImage-exit {
+  opacity: 1;
+}
+.coverImage-exit-active {
+  opacity: 0;
+  transition: opacity 300ms, transform 300ms;
+}
