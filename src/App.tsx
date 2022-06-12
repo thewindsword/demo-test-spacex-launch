@@ -1,7 +1,6 @@
 
 import { Link, Outlet } from 'react-router-dom'
 import logoSVG from './logo.svg'
-import PaginationContext, { paginationContextData } from './context/pagination'
 import './App.css'
 
 function App() {
